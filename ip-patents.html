@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IP & Patents — Leibniz Layer™ by Fronesis Labs</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,700;1,9..144,300&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink: #0e0e0d;
+    --ink2: #3a3a35;
+    --ink3: #7a7a72;
+    --paper: #f5f3ee;
+    --paper2: #ede9e0;
+    --gold: #b8922a;
+    --gold-light: #d4aa47;
+    --rule: rgba(14,14,13,0.12);
+    --mono: 'DM Mono', monospace;
+    --serif: 'Fraunces', serif;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--rule) 1px, transparent 1px),
+      linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container { max-width: 860px; margin: 0 auto; padding: 0 40px; position: relative; z-index: 1; }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    z-index: 100;
+    padding: 20px 40px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-bottom: 1px solid var(--rule);
+    background: rgba(245,243,238,0.9);
+    backdrop-filter: blur(8px);
+  }
+
+  .nav-logo {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink2);
+    text-decoration: none;
+  }
+  .nav-logo span { color: var(--gold); }
+
+  .nav-links { display: flex; gap: 32px; }
+  .nav-links a {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--ink); }
+  .nav-links a.active { color: var(--gold); }
+
+  .page-header {
+    padding: 140px 40px 80px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  .page-title {
+    font-family: var(--serif);
+    font-size: clamp(42px, 6vw, 80px);
+    font-weight: 700;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    margin-bottom: 24px;
+  }
+
+  .page-subtitle {
+    font-size: 15px;
+    color: var(--ink2);
+    max-width: 560px;
+    line-height: 1.8;
+  }
+
+  .content { padding: 80px 40px; }
+
+  .content-section { margin-bottom: 72px; }
+
+  .content-section h2 {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .content-section p {
+    color: var(--ink2);
+    line-height: 1.9;
+    margin-bottom: 16px;
+    font-size: 13px;
+  }
+
+  .content-section p strong { color: var(--ink); font-weight: 500; }
+
+  /* PATENT CARD */
+  .patent-card {
+    border: 1px solid var(--rule);
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  .patent-header {
+    padding: 24px 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 20px;
+    background: var(--paper2);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .patent-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+
+  .patent-status.pending {
+    color: var(--gold);
+    border-color: var(--gold);
+    background: rgba(184,146,42,0.06);
+  }
+
+  .patent-status.pending::before {
+    content: '●';
+    font-size: 8px;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
+  }
+
+  .patent-title {
+    font-family: var(--serif);
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  .patent-body { padding: 24px 28px; }
+
+  .patent-meta {
+    display: grid;
+    grid-template-columns: 140px 1fr;
+    gap: 8px 16px;
+    margin-bottom: 20px;
+  }
+
+  .meta-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    padding-top: 2px;
+  }
+
+  .meta-value {
+    font-size: 12px;
+    color: var(--ink2);
+    line-height: 1.6;
+  }
+
+  .claims-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid var(--rule);
+  }
+
+  .claims-list li {
+    font-size: 12px;
+    color: var(--ink2);
+    padding-left: 20px;
+    position: relative;
+    line-height: 1.7;
+  }
+
+  .claims-list li::before {
+    content: '→';
+    position: absolute; left: 0;
+    color: var(--gold);
+  }
+
+  /* TM TABLE */
+  .tm-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+  }
+
+  .tm-table th {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ink3);
+    text-align: left;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--paper2);
+  }
+
+  .tm-table td {
+    font-size: 12px;
+    color: var(--ink2);
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--rule);
+    vertical-align: top;
+    line-height: 1.7;
+  }
+
+  .tm-table tr:last-child td { border-bottom: none; }
+  .tm-table tr:hover td { background: var(--paper2); }
+
+  .tm-mark {
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--ink);
+  }
+
+  /* NOTICE BOX */
+  .notice {
+    padding: 24px 28px;
+    border: 1px solid rgba(184,146,42,0.3);
+    background: rgba(184,146,42,0.04);
+    margin-top: 40px;
+  }
+
+  .notice p {
+    font-size: 12px;
+    color: var(--ink2);
+    line-height: 1.8;
+    margin: 0;
+  }
+
+  .notice strong { color: var(--gold); }
+
+  /* CONTACT */
+  .contact-block {
+    padding: 48px;
+    border: 1px solid var(--rule);
+    background: var(--ink);
+    color: var(--paper);
+    margin-top: 72px;
+  }
+
+  .contact-block h2 {
+    font-family: var(--serif);
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    color: var(--paper);
+    border: none;
+    padding: 0;
+  }
+
+  .contact-block p {
+    color: rgba(245,243,238,0.65);
+    font-size: 13px;
+    margin-bottom: 24px;
+  }
+
+  .contact-block a {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: var(--gold);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+
+  .contact-block a:hover { background: var(--gold-light); }
+
+  footer {
+    padding: 48px 40px;
+    border-top: 1px solid var(--rule);
+    display: flex; justify-content: space-between; align-items: center;
+    margin-top: 80px;
+  }
+
+  .footer-left { font-size: 11px; color: var(--ink3); line-height: 1.9; }
+  .footer-left a { color: var(--gold); text-decoration: none; }
+  .footer-right { font-size: 11px; color: var(--ink3); text-align: right; }
+
+  @media (max-width: 700px) {
+    .patent-header { flex-direction: column; }
+    .patent-meta { grid-template-columns: 1fr; }
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    footer { flex-direction: column; gap: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="leibniz.html">⬡ Leibniz <span>Layer™</span></a>
+  <div class="nav-links">
+    <a href="leibniz.html#concept">Concept</a>
+    <a href="leibniz.html#properties">Properties</a>
+    <a href="ip-patents.html" class="active">IP & Patents</a>
+    <a href="leibniz.html#product">DCL Evaluator</a>
+    <a href="https://fronesislabs.com">Fronesis Labs</a>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<div class="page-header">
+  <div class="container">
+    <p class="section-label">⬡ Intellectual Property</p>
+    <h1 class="page-title">IP &<br>Patents</h1>
+    <p class="page-subtitle">
+      Fronesis Labs is committed to building a defensible technology position
+      in cryptographic verification for AI agents. This page documents our intellectual property position,
+      trademark claims, and technology rights.
+    </p>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+  <div class="container">
+
+    <!-- TECHNOLOGY STATEMENT -->
+    <div class="content-section">
+      <h2>Technology</h2>
+      <p>
+        Leibniz Layer™ is protected by pending patent applications.
+        We are committed to building a verifiable future for AI agents.
+      </p>
+      <p>
+        The core innovation — deterministic, cryptographically sealed audit trails
+        for AI agent decisions — addresses a fundamental gap in AI governance.
+        As regulatory frameworks such as EU AI Act, GDPR, and sector-specific
+        compliance requirements mature, verifiable AI accountability becomes
+        a mandatory infrastructure layer, not an optional feature.
+      </p>
+      <p>
+        Fronesis Labs is building that layer.
+      </p>
+    </div>
+
+        <!-- PATENTS -->
+    <div class="content-section">
+      <h2>Patent Applications</h2>
+      <p>
+        Fronesis Labs holds pending patent applications covering the core methods
+        of Leibniz Layer™ technology. Details are not disclosed pending examination.
+      </p>
+
+      <div class="notice">
+        <p>
+          <strong>Notice:</strong> All methods, architectures, and implementations described in
+          Leibniz Layer™ documentation and DCL Evaluator software are protected by pending
+          patent applications. Unauthorised reproduction of patented methods is prohibited.
+          Additional jurisdictions in preparation.
+          For licensing enquiries, contact <a href="mailto:partnership@fronesislabs.com" style="color:var(--gold);">partnership@fronesislabs.com</a>
+        </p>
+      </div>
+    </div>
+
+    <!-- TRADEMARKS -->
+    <div class="content-section">
+      <h2>Trademarks</h2>
+      <p>
+        The following marks are claimed by Fronesis Labs. Unauthorised commercial use
+        of these marks in connection with AI verification, audit, or compliance software
+        is prohibited.
+      </p>
+
+      <table class="tm-table">
+        <thead>
+          <tr>
+            <th>Mark</th>
+            <th>Type</th>
+            <th>First Use</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="tm-mark">Leibniz Layer™</span></td>
+            <td>Word mark — technology layer / protocol brand</td>
+            <td>March 2026</td>
+            <td>Common law trademark (™). Registration in preparation.</td>
+          </tr>
+          <tr>
+            <td><span class="tm-mark">DCL Evaluator™</span></td>
+            <td>Word mark — software product</td>
+            <td>March 2026</td>
+            <td>Common law trademark (™). Registration in preparation.</td>
+          </tr>
+          <tr>
+            <td><span class="tm-mark">Fronesis Labs™</span></td>
+            <td>Trade name / company brand</td>
+            <td>March 2026</td>
+            <td>Common law trademark (™).</td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+    <!-- COPYRIGHT -->
+    <div class="content-section">
+      <h2>Copyright & Software Licence</h2>
+      <p>
+        DCL Evaluator source code is published under a <strong>Source-Available Licence</strong>
+        developed by Fronesis Labs. The licence permits inspection, non-commercial
+        research use, and personal evaluation. Commercial use, redistribution, and
+        derivative works require a commercial licence.
+      </p>
+      <p>
+        All documentation, white papers, diagrams, and marketing materials published
+        by Fronesis Labs are © 2026 Fronesis Labs. Leibniz Layer™, DCL Evaluator™ — Patent Pending. All rights reserved.
+      </p>
+      <p>
+        The Leibniz Layer™ protocol specification, once published, will be made available
+        under a royalty-free licence for non-commercial implementations, with commercial
+        licensing available for platform integrators.
+      </p>
+    </div>
+
+    <!-- CONTACT -->
+    <div class="contact-block">
+      <h2>Licensing & Partnership</h2>
+      <p>
+        Interested in licensing Leibniz Layer™ technology for your platform,
+        or partnering on compliance infrastructure? We are open to conversations
+        with platforms, enterprise integrators, and strategic investors.
+      </p>
+      <a href="mailto:partnership@fronesislabs.com" style="color:var(--gold);">partnership@fronesislabs.com</a>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <div class="footer-
